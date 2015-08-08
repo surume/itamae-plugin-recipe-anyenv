@@ -7,11 +7,11 @@ Gem::Specification.new do |spec|
   spec.name          = "itamae-plugin-recipe-anyenv"
   spec.version       = Itamae::Plugin::Recipe::Anyenv::VERSION
   spec.authors       = ["Surume"]
-  spec.email         = ["mail@sururne.com"]
+  spec.email         = ["sururne@gmail.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = %q{Itamae plugin to install anyenv}
+  spec.description   = %q{Itamae plugin to install anyenv}
+  spec.homepage      = "https://github.com/Surume/itamae-plugin-recipe-anyenv"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
