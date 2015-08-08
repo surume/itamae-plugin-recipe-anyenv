@@ -14,3 +14,10 @@ git "#{anyenv_root}/plugins/anyenv-update" do
 end
 
 directory "#{anyenv_root}/envs"
+
+node[:anyenv][:install_envs].each do |env|
+  execute "install #{env}" do
+    command "#{anyenv_init} anyenv install #{env}"
+    not_if "type #{env}"
+  end
+end
