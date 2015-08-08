@@ -1,11 +1,16 @@
-require "itamae/plugin/recipe/anyenv/version"
+DEFAULT_RBENV_ROOT = "/usr/local/rbenv".freeze
 
-module Itamae
-  module Plugin
-    module Recipe
-      module Anyenv
-        # Your code goes here...
-      end
-    end
+def anyenv_root
+  if node[:anyenv] && node[:anyenv][:anyenv_root]
+    return node[:anyenv][:anyenv_root]
   end
+  DEFAULT_RBENV_ROOT
+end
+
+def anyenv_init
+  <<-EOS
+    export ANYENV_ROOT=#{anyenv_root}
+    export PATH="#{anyenv_root}/bin:${PATH}"
+    eval "$(anyenv init -)"
+  EOS
 end
