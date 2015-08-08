@@ -1,4 +1,4 @@
-DEFAULT_RBENV_ROOT = "/usr/local/rbenv".freeze
+DEFAULT_RBENV_ROOT = "/usr/local/anyenv".freeze
 
 def anyenv_root
   if node[:anyenv] && node[:anyenv][:anyenv_root]
