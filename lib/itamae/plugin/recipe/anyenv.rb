@@ -8,7 +8,7 @@ def anyenv_root
 end
 
 def anyenv_init
-    <<-EOS
+  <<-EOS
     export ANYENV_ROOT=#{anyenv_root}
     export PATH="#{anyenv_root}/bin:${PATH}"
     eval "$(anyenv init -)"
