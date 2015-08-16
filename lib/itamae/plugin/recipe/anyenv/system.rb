@@ -32,3 +32,13 @@ node[:anyenv][:install_versions].each do |envs|
     end
   end
 end
+
+node[:anyenv][:install_versions].each do |envs|
+  envs.each do |name, vers|
+    execute "#{name} global #{vers.first}" do
+      command "#{name} global #{vers.first}"
+      command "#{name} rehash"
+      not_if "#{anyenv_init} #{name} global | grep #{vers.first}"
+    end
+  end
+end
