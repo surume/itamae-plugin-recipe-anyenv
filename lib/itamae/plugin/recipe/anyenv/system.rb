@@ -20,7 +20,7 @@ node[:anyenv][:install_envs].each do |env|
     command "#{anyenv_init} anyenv install #{env}"
     not_if "type #{env}"
   end
-  not_if "$SHELL -l; #{anyenv_init} anyenv versions | grep #{name} versions"
+  not_if "$SHELL -l; #{anyenv_init} anyenv versions | grep #{env} versions"
 end
 
 node[:anyenv][:install_versions].each do |envs|
