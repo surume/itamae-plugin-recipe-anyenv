@@ -1,4 +1,4 @@
-[![Gem Version](https://badge.fury.io/rb/itamae-plugin-recipe-anyenv.svg)](http://badge.fury.io/rb/itamae-plugin-recipe-anyenv)
+[![Gem Version](http://badge.fury.io/rb/itamae-plugin-recipe-anyenv.svg)](http://badge.fury.io/rb/itamae-plugin-recipe-anyenv)
 # Itamae::Plugin::Recipe::Anyenv
 
 Itamae plugin to install anyenv
