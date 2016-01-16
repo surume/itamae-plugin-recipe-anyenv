@@ -37,13 +37,10 @@ Use this with `itamae -y node.yml`
 ```yml
 anyenv:
   anyenv_root: "/path/to/anyenv"
-  install_envs:
-    - rbenv
-    - exenv
   install_versions:
-    - rbenv:
+    rbenv:
       - 2.2.2
-    - exenv:
+    exenv:
       - 1.0.5
 ```
 
@@ -71,20 +68,15 @@ Use this with `itamae -y node.yml`
 anyenv:
   users:
     taro:
-      install_envs:
-        - rbenv
-        - exenv
       install_versions:
-        - rbenv:
+        rbenv:
           - 2.2.2
-        - exenv:
+        exenv:
           - 1.0.5
     jiro:
       anyenv_root: /opt/jiro/.anyenv
-      install_envs:
-        - ndenv
       install_versions:
-        - ndenv:
+        ndenv:
           - v0.12.7
 ```
 
@@ -93,13 +85,10 @@ You can configure default attributes:
 ```yml
 anyenv:
   # default attributes
-  install_envs:
-    - rbenv
-    - exenv
   install_versions:
-    - rbenv:
+    rbenv:
       - 2.2.2
-    - exenv:
+    exenv:
       - 1.0.5
 
   # users configurations
@@ -107,7 +96,7 @@ anyenv:
     taro: {}
     jiro:
       install_versions:
-        - rbenv:
+        rbenv:
           - 2.2.3
 ```
 
