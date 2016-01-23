@@ -49,7 +49,7 @@ def run(attributes, username = nil)
     repository "#{scheme}://github.com/znz/anyenv-update.git"
   end
 
-  attributes[:install_envs].each do |env|
+  attributes[:install_versions].keys.each do |env|
     execute "install #{env}" do
       user username if username
       command "#{init_cmd} anyenv install #{env}"
@@ -57,26 +57,22 @@ def run(attributes, username = nil)
     end
   end
 
-  attributes[:install_versions].each do |envs|
-    envs.each do |name, vers|
-      vers.each do |ver|
-        execute "#{name} install #{ver}" do
-          user username if username
-          command "#{init_cmd} #{name} install #{ver}"
-          not_if "#{init_cmd} #{name} versions | grep #{ver}"
-        end
+  attributes[:install_versions].each do |env, vers|
+    vers.each do |ver|
+      execute "#{env} install #{ver}" do
+        user username if username
+        command "#{init_cmd} #{env} install #{ver}"
+        not_if "#{init_cmd} #{env} versions | grep #{ver}"
       end
     end
   end
 
-  attributes[:install_versions].each do |envs|
-    envs.each do |name, vers|
-      execute "#{name} global #{vers.first}" do
-        user username if username
-        command "#{init_cmd} #{name} global #{vers.first}; " \
-                "#{init_cmd} #{name} rehash"
-        not_if "#{init_cmd} #{name} global | grep #{vers.first}"
-      end
+  attributes[:install_versions].each do |env, vers|
+    execute "#{env} global #{vers.first}" do
+      user username if username
+      command "#{init_cmd} #{env} global #{vers.first}; " \
+              "#{init_cmd} #{env} rehash"
+      not_if "#{init_cmd} #{env} global | grep #{vers.first}"
     end
   end
 end
