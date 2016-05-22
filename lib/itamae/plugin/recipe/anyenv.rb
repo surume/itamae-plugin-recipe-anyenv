@@ -47,16 +47,18 @@ def clone_anyenv(install_path, username)
   clone_repository(install_path, repo_path, username)
 end
 
+def clone_anyenv_update(anyenv_root_path, username)
+  install_path = "#{anyenv_root_path}/plugins/anyenv-update"
+  repo_path = "#{@scheme}://github.com/znz/anyenv-update.git"
+  clone_repository(install_path, repo_path, username)
+end
+
 def run(attributes, username = nil)
   root_path = anyenv_root(username)
   init_cmd = anyenv_init(root_path)
 
   clone_anyenv(root_path, username)
-
-  git "#{root_path}/plugins/anyenv-update" do
-    user username
-    repository "#{@scheme}://github.com/znz/anyenv-update.git"
-  end
+  clone_anyenv_update(root_path, username)
 
   attributes[:install_versions].keys.each do |env|
     execute "install #{env}" do
