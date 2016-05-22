@@ -32,7 +32,6 @@ def anyenv_init(root_path)
   init_str =  %(export ANYENV_ROOT="#{root_path}"; )
   init_str << %(export PATH="#{root_path}/bin:${PATH}"; )
   init_str << %(eval "$(anyenv init -)"; )
-  init_str
 end
 
 def run(attributes, username = nil)
