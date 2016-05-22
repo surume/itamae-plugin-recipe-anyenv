@@ -73,9 +73,19 @@ def install_env_version(root_path, envname, version, username)
   end
 end
 
+def global_version(root_path, envname, version, username)
+  init_cmd = anyenv_init(root_path)
+
+  execute "#{envname} global #{version}" do
+    user username if username
+    command "#{init_cmd} #{envname} global #{version}; " \
+      "#{init_cmd} #{envname} rehash"
+    not_if "#{init_cmd} #{envname} global | grep #{version}"
+  end
+end
+
 def run(attributes, username = nil)
   root_path = anyenv_root(username)
-  init_cmd = anyenv_init(root_path)
 
   clone_anyenv(root_path, username)
   clone_anyenv_update(root_path, username)
@@ -91,11 +101,6 @@ def run(attributes, username = nil)
   end
 
   attributes[:install_versions].each do |env, vers|
-    execute "#{env} global #{vers.first}" do
-      user username if username
-      command "#{init_cmd} #{env} global #{vers.first}; " \
-              "#{init_cmd} #{env} rehash"
-      not_if "#{init_cmd} #{env} global | grep #{vers.first}"
-    end
+    global_version(root_path, env, vers.first, username)
   end
 end
