@@ -70,6 +70,20 @@ def clone_anyenv_update
   clone_repository(install_path, repo_path)
 end
 
+def install_envs(attributes)
+  attributes[:install_versions].each do |envs|
+    envs.each do |env, vers|
+      install_env(env)
+
+      vers.each do |ver|
+        install_env_version(env, ver)
+      end
+
+      global_version(env, vers.first)
+    end
+  end
+end
+
 def install_env(envname)
   execute "install #{envname}" do
     user @username if @username
@@ -92,19 +106,5 @@ def global_version(envname, version)
     command "#{@init_cmd} #{envname} global #{version}; " \
       "#{@init_cmd} #{envname} rehash"
     not_if "#{@init_cmd} #{envname} global | grep #{version}"
-  end
-end
-
-def install_envs(attributes)
-  attributes[:install_versions].each do |envs|
-    envs.each do |env, vers|
-      install_env(env)
-
-      vers.each do |ver|
-        install_env_version(env, ver)
-      end
-
-      global_version(env, vers.first)
-    end
   end
 end
