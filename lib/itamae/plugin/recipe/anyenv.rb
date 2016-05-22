@@ -90,17 +90,13 @@ def run(attributes, username = nil)
   clone_anyenv(root_path, username)
   clone_anyenv_update(root_path, username)
 
-  attributes[:install_versions].keys.each do |env|
-    install_env(root_path, env, username)
-  end
-
   attributes[:install_versions].each do |env, vers|
+    install_env(root_path, env, username)
+
     vers.each do |ver|
       install_env_version(root_path, env, ver, username)
     end
-  end
 
-  attributes[:install_versions].each do |env, vers|
     global_version(root_path, env, vers.first, username)
   end
 end
