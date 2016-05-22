@@ -63,6 +63,16 @@ def install_env(root_path, envname, username)
   end
 end
 
+def install_env_version(root_path, envname, version, username)
+  init_cmd = anyenv_init(root_path)
+
+  execute "#{envname} install #{ver}" do
+    user username if username
+    command "#{init_cmd} #{envname} install #{version}"
+    not_if "#{init_cmd} #{envname} versions | grep #{version}"
+  end
+end
+
 def run(attributes, username = nil)
   root_path = anyenv_root(username)
   init_cmd = anyenv_init(root_path)
@@ -76,11 +86,7 @@ def run(attributes, username = nil)
 
   attributes[:install_versions].each do |env, vers|
     vers.each do |ver|
-      execute "#{env} install #{ver}" do
-        user username if username
-        command "#{init_cmd} #{env} install #{ver}"
-        not_if "#{init_cmd} #{env} versions | grep #{ver}"
-      end
+      install_env_version(root_path, env, ver, username)
     end
   end
 
