@@ -53,6 +53,16 @@ def clone_anyenv_update(anyenv_root_path, username)
   clone_repository(install_path, repo_path, username)
 end
 
+def install_env(root_path, envname, username)
+  init_cmd = anyenv_init(root_path)
+
+  execute "install #{envname}" do
+    user username if username
+    command "#{init_cmd} anyenv install #{envname}"
+    not_if "#{init_cmd} type #{envname}"
+  end
+end
+
 def run(attributes, username = nil)
   root_path = anyenv_root(username)
   init_cmd = anyenv_init(root_path)
@@ -61,11 +71,7 @@ def run(attributes, username = nil)
   clone_anyenv_update(root_path, username)
 
   attributes[:install_versions].keys.each do |env|
-    execute "install #{env}" do
-      user username if username
-      command "#{init_cmd} anyenv install #{env}"
-      not_if "#{init_cmd} type #{env}"
-    end
+    install_env(root_path, env, username)
   end
 
   attributes[:install_versions].each do |env, vers|
