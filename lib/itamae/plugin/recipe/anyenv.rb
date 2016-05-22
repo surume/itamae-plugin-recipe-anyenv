@@ -1,7 +1,24 @@
-DEFAULT_RBENV_ROOT = "/usr/local/anyenv".freeze
+DEFAULT_RBENV_ROOT = '/usr/local/anyenv'.freeze
+
+def run(attributes, username = nil)
+  init(username)
+
+  clone_anyenv
+  clone_anyenv_update
+
+  install_envs(attributes)
+end
+
+private
+
+def init(username)
+  @username = username
+  @anyenv_root_path = anyenv_root(username)
+  @init_cmd = anyenv_init(@anyenv_root_path)
+end
 
 def scheme
-  scheme ||= node[:anyenv][:scheme] || "git"
+  @scheme ||= node[:anyenv][:scheme] || 'git'
 end
 
 def anyenv_root(username)
@@ -21,7 +38,7 @@ def anyenv_user_root(username)
     return node[:anyenv][:users][username][:anyenv_root]
   end
   case node[:platform]
-  when "darwin"
+  when 'darwin'
     "/Users/#{username}/.anyenv"
   else
     "/home/#{username}/.anyenv"
@@ -29,50 +46,65 @@ def anyenv_user_root(username)
 end
 
 def anyenv_init(root_path)
-  init_str =  %[export ANYENV_ROOT="#{root_path}"; ]
-  init_str << %[export PATH="#{root_path}/bin:${PATH}"; ]
-  init_str << %[eval "$(anyenv init -)"; ]
-  init_str
+  init_str =  %(export ANYENV_ROOT="#{root_path}"; )
+  init_str << %(export PATH="#{root_path}/bin:${PATH}"; )
+  init_str << %(eval "$(anyenv init -)"; )
 end
 
-def run(attributes, username = nil)
-  root_path = anyenv_root(username)
-  init_cmd = anyenv_init(root_path)
-
-  git root_path do
-    user username if username
-    repository "#{scheme}://github.com/riywo/anyenv.git"
+def clone_repository(install_path, repo_path)
+  git install_path do
+    user @username if @username
+    repository repo_path if repo_path
+    not_if "test -d #{install_path}"
   end
+end
 
-  git "#{root_path}/plugins/anyenv-update" do
-    user username
-    repository "#{scheme}://github.com/znz/anyenv-update.git"
-  end
+def clone_anyenv
+  repo_path = "#{scheme}://github.com/riywo/anyenv.git"
+  clone_repository(@anyenv_root_path, repo_path)
+end
 
-  attributes[:install_versions].keys.each do |env|
-    execute "install #{env}" do
-      user username if username
-      command "#{init_cmd} anyenv install #{env}"
-      not_if "#{init_cmd} type #{env}"
-    end
-  end
+def clone_anyenv_update
+  install_path = "#{@anyenv_root_path}/plugins/anyenv-update"
+  repo_path = "#{scheme}://github.com/znz/anyenv-update.git"
+  clone_repository(install_path, repo_path)
+end
 
-  attributes[:install_versions].each do |env, vers|
-    vers.each do |ver|
-      execute "#{env} install #{ver}" do
-        user username if username
-        command "#{init_cmd} #{env} install #{ver}"
-        not_if "#{init_cmd} #{env} versions | grep #{ver}"
+def install_envs(attributes)
+  attributes[:install_versions].each do |envs|
+    envs.each do |env, vers|
+      install_env(env)
+
+      vers.each do |ver|
+        install_env_version(env, ver)
       end
+
+      global_version(env, vers.first)
     end
   end
+end
 
-  attributes[:install_versions].each do |env, vers|
-    execute "#{env} global #{vers.first}" do
-      user username if username
-      command "#{init_cmd} #{env} global #{vers.first}; " \
-              "#{init_cmd} #{env} rehash"
-      not_if "#{init_cmd} #{env} global | grep #{vers.first}"
-    end
+def install_env(envname)
+  execute "install #{envname}" do
+    user @username if @username
+    command "#{@init_cmd} anyenv install #{envname}"
+    not_if "#{@init_cmd} type #{envname}"
+  end
+end
+
+def install_env_version(envname, version)
+  execute "#{envname} install #{version}" do
+    user @username if @username
+    command "#{@init_cmd} #{envname} install #{version}"
+    not_if "#{@init_cmd} #{envname} versions | grep #{version}"
+  end
+end
+
+def global_version(envname, version)
+  execute "#{envname} global #{version}" do
+    user @username if @username
+    command "#{@init_cmd} #{envname} global #{version}; " \
+      "#{@init_cmd} #{envname} rehash"
+    not_if "#{@init_cmd} #{envname} global | grep #{version}"
   end
 end

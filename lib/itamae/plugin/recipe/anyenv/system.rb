@@ -1,5 +1,5 @@
 require 'itamae/plugin/recipe/anyenv'
 
-package "git"
+package 'git'
 
 run(node[:anyenv])
