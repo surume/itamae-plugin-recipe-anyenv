@@ -1,7 +1,7 @@
-DEFAULT_RBENV_ROOT = "/usr/local/anyenv".freeze
+DEFAULT_RBENV_ROOT = '/usr/local/anyenv'.freeze
 
 def scheme
-  scheme ||= node[:anyenv][:scheme] || "git"
+  scheme ||= node[:anyenv][:scheme] || 'git'
 end
 
 def anyenv_root(username)
@@ -21,7 +21,7 @@ def anyenv_user_root(username)
     return node[:anyenv][:users][username][:anyenv_root]
   end
   case node[:platform]
-  when "darwin"
+  when 'darwin'
     "/Users/#{username}/.anyenv"
   else
     "/home/#{username}/.anyenv"
