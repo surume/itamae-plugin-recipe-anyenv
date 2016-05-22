@@ -1,5 +1,24 @@
 DEFAULT_RBENV_ROOT = '/usr/local/anyenv'.freeze
 
+def run(attributes, username = nil)
+  init(username)
+
+  clone_anyenv
+  clone_anyenv_update
+
+  attributes[:install_versions].each do |env, vers|
+    install_env(root_path, env, username)
+
+    vers.each do |ver|
+      install_env_version(env, ver)
+    end
+
+    global_version(env, vers.first)
+  end
+end
+
+private
+
 def init(username)
   @username = username
   @anyenv_root_path = anyenv_root(username)
@@ -81,22 +100,5 @@ def global_version(envname, version)
     command "#{@init_cmd} #{envname} global #{version}; " \
       "#{@init_cmd} #{envname} rehash"
     not_if "#{@init_cmd} #{envname} global | grep #{version}"
-  end
-end
-
-def run(attributes, username = nil)
-  init(username)
-
-  clone_anyenv
-  clone_anyenv_update
-
-  attributes[:install_versions].each do |env, vers|
-    install_env(root_path, env, username)
-
-    vers.each do |ver|
-      install_env_version(env, ver)
-    end
-
-    global_version(env, vers.first)
   end
 end
