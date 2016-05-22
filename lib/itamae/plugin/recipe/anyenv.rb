@@ -6,15 +6,7 @@ def run(attributes, username = nil)
   clone_anyenv
   clone_anyenv_update
 
-  attributes[:install_versions].each do |env, vers|
-    install_env(env)
-
-    vers.each do |ver|
-      install_env_version(env, ver)
-    end
-
-    global_version(env, vers.first)
-  end
+  install_envs(attributes)
 end
 
 private
@@ -100,5 +92,19 @@ def global_version(envname, version)
     command "#{@init_cmd} #{envname} global #{version}; " \
       "#{@init_cmd} #{envname} rehash"
     not_if "#{@init_cmd} #{envname} global | grep #{version}"
+  end
+end
+
+def install_envs(attributes)
+  attributes[:install_versions].each do |envs|
+    envs.each do |env, vers|
+      install_env(env)
+
+      vers.each do |ver|
+        install_env_version(env, ver)
+      end
+
+      global_version(env, vers.first)
+    end
   end
 end
