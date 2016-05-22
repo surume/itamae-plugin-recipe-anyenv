@@ -1,7 +1,7 @@
 DEFAULT_RBENV_ROOT = '/usr/local/anyenv'.freeze
 
 def scheme
-  scheme ||= node[:anyenv][:scheme] || 'git'
+  @scheme ||= node[:anyenv][:scheme] || 'git'
 end
 
 def anyenv_root(username)
@@ -41,12 +41,12 @@ def run(attributes, username = nil)
 
   git root_path do
     user username if username
-    repository "#{scheme}://github.com/riywo/anyenv.git"
+    repository "#{@scheme}://github.com/riywo/anyenv.git"
   end
 
   git "#{root_path}/plugins/anyenv-update" do
     user username
-    repository "#{scheme}://github.com/znz/anyenv-update.git"
+    repository "#{@scheme}://github.com/znz/anyenv-update.git"
   end
 
   attributes[:install_versions].keys.each do |env|
