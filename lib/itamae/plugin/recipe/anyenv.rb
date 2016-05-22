@@ -1,5 +1,11 @@
 DEFAULT_RBENV_ROOT = '/usr/local/anyenv'.freeze
 
+def init(username)
+  @username = username
+  @anyenv_root_path = anyenv_root(username)
+  @init_cmd = anyenv_init(root_path)
+end
+
 def scheme
   @scheme ||= node[:anyenv][:scheme] || 'git'
 end
@@ -34,69 +40,63 @@ def anyenv_init(root_path)
   init_str << %(eval "$(anyenv init -)"; )
 end
 
-def clone_repository(install_path, repo_path, username)
+def clone_repository(install_path, repo_path)
   git install_path do
-    user username if username
-    repository repo_path
+    user @username if @username
+    repository repo_path if repo_path
     not_if "test -d #{install_path}"
   end
 end
 
-def clone_anyenv(install_path, username)
+def clone_anyenv
   repo_path = "#{@scheme}://github.com/riywo/anyenv.git"
-  clone_repository(install_path, repo_path, username)
+  clone_repository(@anyenv_root_path, repo_path)
 end
 
-def clone_anyenv_update(anyenv_root_path, username)
-  install_path = "#{anyenv_root_path}/plugins/anyenv-update"
+def clone_anyenv_update
+  install_path = "#{@anyenv_root_path}/plugins/anyenv-update"
   repo_path = "#{@scheme}://github.com/znz/anyenv-update.git"
-  clone_repository(install_path, repo_path, username)
+  clone_repository(install_path, repo_path)
 end
 
-def install_env(root_path, envname, username)
-  init_cmd = anyenv_init(root_path)
-
+def install_env(envname)
   execute "install #{envname}" do
-    user username if username
-    command "#{init_cmd} anyenv install #{envname}"
-    not_if "#{init_cmd} type #{envname}"
+    user @username if @username
+    command "#{@init_cmd} anyenv install #{envname}"
+    not_if "#{@init_cmd} type #{envname}"
   end
 end
 
-def install_env_version(root_path, envname, version, username)
-  init_cmd = anyenv_init(root_path)
-
+def install_env_version(envname, version)
   execute "#{envname} install #{ver}" do
-    user username if username
-    command "#{init_cmd} #{envname} install #{version}"
-    not_if "#{init_cmd} #{envname} versions | grep #{version}"
+    user @username if @username
+    command "#{@init_cmd} #{envname} install #{version}"
+    not_if "#{@init_cmd} #{envname} versions | grep #{version}"
   end
 end
 
-def global_version(root_path, envname, version, username)
-  init_cmd = anyenv_init(root_path)
-
+def global_version(envname, version)
   execute "#{envname} global #{version}" do
-    user username if username
-    command "#{init_cmd} #{envname} global #{version}; " \
-      "#{init_cmd} #{envname} rehash"
-    not_if "#{init_cmd} #{envname} global | grep #{version}"
+    user @username if @username
+    command "#{@init_cmd} #{envname} global #{version}; " \
+      "#{@init_cmd} #{envname} rehash"
+    not_if "#{@init_cmd} #{envname} global | grep #{version}"
   end
 end
 
 def run(attributes, username = nil)
-  root_path = anyenv_root(username)
+  init(username)
 
-  clone_anyenv(root_path, username)
-  clone_anyenv_update(root_path, username)
+  clone_anyenv
+  clone_anyenv_update
 
   attributes[:install_versions].each do |env, vers|
     install_env(root_path, env, username)
 
     vers.each do |ver|
-      install_env_version(root_path, env, ver, username)
+      install_env_version(env, ver)
     end
 
-    global_version(root_path, env, vers.first, username)
+    global_version(env, vers.first)
   end
 end
