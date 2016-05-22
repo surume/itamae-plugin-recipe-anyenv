@@ -87,7 +87,7 @@ end
 def install_env(envname)
   execute "install #{envname}" do
     user @username if @username
-    command "#{@init_cmd} anyenv install #{envname}"
+    command "#{@init_cmd} yes | anyenv install #{envname}"
     not_if "#{@init_cmd} type #{envname}"
   end
 end
@@ -95,7 +95,7 @@ end
 def install_env_version(envname, version)
   execute "#{envname} install #{version}" do
     user @username if @username
-    command "#{@init_cmd} #{envname} install #{version}"
+    command "#{@init_cmd} yes | #{envname} install #{version}"
     not_if "#{@init_cmd} #{envname} versions | grep #{version}"
   end
 end
