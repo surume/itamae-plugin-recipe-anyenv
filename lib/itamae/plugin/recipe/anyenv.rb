@@ -7,7 +7,7 @@ def run(attributes, username = nil)
   clone_anyenv_update
 
   attributes[:install_versions].each do |env, vers|
-    install_env(root_path, env, username)
+    install_env(env)
 
     vers.each do |ver|
       install_env_version(env, ver)
@@ -22,7 +22,7 @@ private
 def init(username)
   @username = username
   @anyenv_root_path = anyenv_root(username)
-  @init_cmd = anyenv_init(root_path)
+  @init_cmd = anyenv_init(@anyenv_root_path)
 end
 
 def scheme
@@ -68,13 +68,13 @@ def clone_repository(install_path, repo_path)
 end
 
 def clone_anyenv
-  repo_path = "#{@scheme}://github.com/riywo/anyenv.git"
+  repo_path = "#{scheme}://github.com/riywo/anyenv.git"
   clone_repository(@anyenv_root_path, repo_path)
 end
 
 def clone_anyenv_update
   install_path = "#{@anyenv_root_path}/plugins/anyenv-update"
-  repo_path = "#{@scheme}://github.com/znz/anyenv-update.git"
+  repo_path = "#{scheme}://github.com/znz/anyenv-update.git"
   clone_repository(install_path, repo_path)
 end
 
@@ -87,7 +87,7 @@ def install_env(envname)
 end
 
 def install_env_version(envname, version)
-  execute "#{envname} install #{ver}" do
+  execute "#{envname} install #{version}" do
     user @username if @username
     command "#{@init_cmd} #{envname} install #{version}"
     not_if "#{@init_cmd} #{envname} versions | grep #{version}"
