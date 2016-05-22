@@ -34,14 +34,24 @@ def anyenv_init(root_path)
   init_str << %(eval "$(anyenv init -)"; )
 end
 
+def clone_repository(install_path, repo_path, username)
+  git install_path do
+    user username if username
+    repository repo_path
+    not_if "test -d #{install_path}"
+  end
+end
+
+def clone_anyenv(install_path, username)
+  repo_path = "#{@scheme}://github.com/riywo/anyenv.git"
+  clone_repository(install_path, repo_path, username)
+end
+
 def run(attributes, username = nil)
   root_path = anyenv_root(username)
   init_cmd = anyenv_init(root_path)
 
-  git root_path do
-    user username if username
-    repository "#{@scheme}://github.com/riywo/anyenv.git"
-  end
+  clone_anyenv(root_path, username)
 
   git "#{root_path}/plugins/anyenv-update" do
     user username
