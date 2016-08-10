@@ -83,7 +83,7 @@ def clone_anyenv(root_path)
   clone_repository(root_path, repo_path)
 end
 
-def clone_anyenv_update
+def clone_anyenv_update(root_path)
   install_path = "#{root_path}/plugins/anyenv-update"
   repo_path = "#{scheme}://github.com/znz/anyenv-update.git"
   clone_repository(install_path, repo_path)
