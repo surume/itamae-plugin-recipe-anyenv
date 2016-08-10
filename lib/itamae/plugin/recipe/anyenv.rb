@@ -14,10 +14,22 @@ def run(attributes, username = ENV['USER'])
   clone_anyenv_update(root_path)
 
   directory "#{root_path}/envs"
+
+  execute <<-"EOS".gsub("\n", ' ')
+export ANYENV_ROOT=#{root_path};
+export PATH=#{root_path}/bin:${PATH};
+eval "$(anyenv init -)";
+anyenv install rbenv;
+  EOS
+
   # install_envs(attributes)
 end
 
 private
+
+def scheme
+  @scheme ||= node[:anyenv][:scheme] || 'git'
+end
 
 # def init(username)
 #   @username = username
@@ -25,9 +37,6 @@ private
 #   @init_cmd = anyenv_init(@anyenv_root_path)
 # end
 
-# def scheme
-#   @scheme ||= node[:anyenv][:scheme] || 'git'
-# end
 
 # def anyenv_root(username)
 #   return anyenv_system_root if username.nil?
