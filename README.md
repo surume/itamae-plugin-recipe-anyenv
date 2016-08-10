@@ -23,6 +23,12 @@ Or install it yourself as:
 ### System wide
 System wide anyenv installation
 
+install directory is `ANYENV_ROOT` enviroment
+
+`export ANYENV_ROOT=~/.anyenv`
+
+or prease use the direnv
+
 #### Recipe
 
 ```ruby
@@ -36,7 +42,6 @@ Use this with `itamae -y node.yml`
 
 ```yml
 anyenv:
-  anyenv_root: "/path/to/anyenv"
   install_versions:
     rbenv:
       - 2.2.2
@@ -51,64 +56,6 @@ Recommend to append this to .bashrc in your server.
 ```bash
 export ANYENV_ROOT="/usr/local/anyenv"
 export PATH="${ANYENV_ROOT}/.anyenv/bin:$PATH"
-if which anyenv > /dev/null; then eval "$(anyenv init -)"; fi
-```
-
-### Users
-#### Recipe
-```ruby
-# your recipe
-include_recipe "anyenv::users"
-```
-
-#### Node
-Use this with `itamae -y node.yml`
-
-```yml
-anyenv:
-  users:
-    taro:
-      install_versions:
-        rbenv:
-          - 2.2.2
-        exenv:
-          - 1.0.5
-    jiro:
-      anyenv_root: /opt/jiro/.anyenv
-      install_versions:
-        ndenv:
-          - v0.12.7
-```
-
-You can configure default attributes:
-
-```yml
-anyenv:
-  # default attributes
-  install_versions:
-    rbenv:
-      - 2.2.2
-    exenv:
-      - 1.0.5
-
-  # users configurations
-  users:
-    taro: {}
-    jiro:
-      install_versions:
-        rbenv:
-          - 2.2.3
-```
-
-In default, use `/home/username/.anyenv` as anyenv root directory.
-
-#### .bashrc
-
-Recommend to append this to .bashrc in your server.
-
-```bash
-export ANYENV_ROOT="/home/username/.anyenv"
-export PATH="${ANYENV_ROOT}/bin:$PATH"
 if which anyenv > /dev/null; then eval "$(anyenv init -)"; fi
 ```
 
