@@ -35,7 +35,7 @@ def install_envs(attributes)
 end
 
 def install(from, to)
-  execute anyenv_init_with("yes | #{command} install #{to};")
+  execute anyenv_init_with("yes | #{from} install #{to};")
 end
 
 def init(username)

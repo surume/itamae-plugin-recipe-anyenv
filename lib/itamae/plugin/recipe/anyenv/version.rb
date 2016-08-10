@@ -2,7 +2,7 @@ module Itamae
   module Plugin
     module Recipe
       module Anyenv
-        VERSION = '0.3.31'.freeze
+        VERSION = '0.3.32'.freeze
       end
     end
   end
