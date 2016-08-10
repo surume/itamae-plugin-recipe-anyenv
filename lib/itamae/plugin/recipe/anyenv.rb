@@ -1,4 +1,4 @@
-DEFAULT_RBENV_ROOT = '/usr/local/anyenv'.freeze
+DEFAULT_ANYENV_ROOT = '/usr/local/anyenv'.freeze
 
 def run(attributes, username = nil)
   init(username)
@@ -30,7 +30,7 @@ def anyenv_system_root
   if node[:anyenv] && node[:anyenv][:anyenv_root]
     return node[:anyenv][:anyenv_root]
   end
-  DEFAULT_RBENV_ROOT
+  return ENV['ANYENV_ROOT'] || DEFAULT_ANYENV_ROOT
 end
 
 def anyenv_user_root(username)
