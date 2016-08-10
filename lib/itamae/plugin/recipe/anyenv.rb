@@ -22,21 +22,9 @@ def scheme
   @scheme ||= node[:anyenv][:scheme] || 'git'
 end
 
-def install_envs(attributes)
-  attributes[:install_versions].each do |envs|
-    envs.each do |env, vers|
-      install('anyenv', env)
-
-      vers.each { |ver| install(env, ver) }
-
-      global_version(env, vers.first)
-    end
-  end
-end
-
-def install(from, to)
-  execute anyenv_init_with("yes | #{from} install #{to};")
-end
+# def install(from, to)
+#   execute anyenv_init_with("yes | #{from} install #{to};")
+# end
 
 def init(username)
   @username = username
@@ -103,49 +91,41 @@ def clone_anyenv_update
   clone_repository(install_path, repo_path)
 end
 
-# def install_envs(attributes)
-#   attributes[:install_versions].each do |envs|
-#     envs.each do |env, vers|
-#       install_env(env)
+def install_envs(attributes)
+  attributes[:install_versions].each do |envs|
+    envs.each do |env, vers|
+      install_env(env)
 
-#       vers.each do |ver|
-#         install_env_version(env, ver)
-#       end
+      vers.each { |ver| install_env_version(env, ver) }
 
-#       global_version(env, vers.first)
-#     end
-#   end
-# end
+      global_version(env, vers.first)
+    end
+  end
+end
 
-# def install_env(envname)
-#   execute "install #{envname}" do
-#     user @username if @username
-#     command @init_cmd
-#     command "#{@init_cmd} yes | anyenv install #{envname};"
-#     not_if "type #{envname}"
-#   end
-# end
+def install_env(envname)
+  execute "install #{envname}" do
+    user @username if @username
+    command anyenv_init_with "yes | anyenv install #{envname};"
+    not_if anyenv_init_with "type #{envname}"
+  end
+end
 
-# def install_env_version(envname, version)
-#   execute "#{envname} install #{version}" do
-#     user @username if @username
-#     command "#{@init_cmd} yes | #{envname} install #{version}"
-#     not_if "#{@init_cmd} #{envname} versions | grep #{version}"
-#   end
-# end
+def install_env_version(envname, version)
+  execute "#{envname} install #{version}" do
+    user @username if @username
+    command anyenv_init_with "yes | #{envname} install #{version}"
+    not_if anyenv_init_with "#{envname} versions | grep #{version}"
+  end
+end
 
 def global_version(envname, version)
-  execute anyenv_init_with <<-EOS
-    #{envname} global;
-    #{version}; #{envname} rehash;
-  EOS
-
-  # execute "#{envname} global #{version}" do
-  #   user @username if @username
-  #   command <<-EOS
-  #     #{envname} global #{version};
-  #     #{envname} rehash;
-  #   EOS
-  #   not_if "#{envname} global | grep #{version}"
-  # end
+  execute "#{envname} global #{version}" do
+    user @username if @username
+    command anyenv_init_with <<-EOS
+      #{envname} global;
+      #{version}; #{envname} rehash;
+    EOS
+    not_if anyenv_init_with "#{envname} global | grep #{version}"
+  end
 end
