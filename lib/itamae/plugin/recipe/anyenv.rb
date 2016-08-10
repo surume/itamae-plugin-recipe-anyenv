@@ -89,7 +89,7 @@ end
 def install_env(envname)
   execute "install #{envname}" do
     user @username if @username
-    command "#{@init_cmd} yes | anyenv install #{envname}"
+    command "#{@init_cmd} yes | anyenv install #{envname}; #{@init_cmd}"
     not_if "#{@init_cmd} type #{envname}"
   end
 end
