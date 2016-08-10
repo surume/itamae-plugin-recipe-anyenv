@@ -78,6 +78,7 @@ end
 def install_envs(attributes)
   attributes[:install_versions].each do |envs|
     envs.each do |env, vers|
+      init_cmd
       install_env(env)
 
       init_cmd
