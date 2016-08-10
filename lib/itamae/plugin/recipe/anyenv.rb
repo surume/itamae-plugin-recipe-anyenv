@@ -19,28 +19,28 @@ def run(attributes, username = ENV['USER'])
 export ANYENV_ROOT=#{root_path};
 export PATH=#{root_path}/bin:${PATH};
 eval "$(anyenv init -)";
-anyenv install rbenv;
+yes | anyenv install rbenv;
   EOS
 
   execute <<-"EOS".gsub("\n", ' ')
 export ANYENV_ROOT=#{root_path};
 export PATH=#{root_path}/bin:${PATH};
 eval "$(anyenv init -)";
-rbenv install 2.3.1;
+yes | rbenv install 2.3.1;
   EOS
 
   execute <<-"EOS".gsub("\n", ' ')
 export ANYENV_ROOT=#{root_path};
 export PATH=#{root_path}/bin:${PATH};
 eval "$(anyenv init -)";
-anyenv install exenv;
+yes | anyenv install exenv;
   EOS
 
   execute <<-"EOS".gsub("\n", ' ')
 export ANYENV_ROOT=#{root_path};
 export PATH=#{root_path}/bin:${PATH};
 eval "$(anyenv init -)";
-exenv install 1.0.0;
+yes | exenv install 1.0.0;
   EOS
 
 
