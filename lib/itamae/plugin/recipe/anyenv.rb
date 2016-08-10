@@ -6,6 +6,7 @@ def run(attributes, username = nil)
   clone_anyenv
   clone_anyenv_update
 
+  init_cmd
   install_envs(attributes)
 end
 
@@ -79,6 +80,7 @@ def install_envs(attributes)
     envs.each do |env, vers|
       install_env(env)
 
+      init_cmd
       vers.each do |ver|
         install_env_version(env, ver)
       end
@@ -89,7 +91,6 @@ def install_envs(attributes)
 end
 
 def install_env(envname)
-  execute @init_cmd
   execute "install #{envname}" do
     user @username if @username
     command "yes | anyenv install #{envname};"
@@ -98,7 +99,6 @@ def install_env(envname)
 end
 
 def install_env_version(envname, version)
-  execute @init_cmd
   execute "#{envname} install #{version}" do
     user @username if @username
     command "yes | #{envname} install #{version}"
@@ -107,11 +107,17 @@ def install_env_version(envname, version)
 end
 
 def global_version(envname, version)
-  execute @init_cmd
   execute "#{envname} global #{version}" do
     user @username if @username
     command "#{envname} global #{version}; " \
       "#{envname} rehash"
     not_if "#{envname} global | grep #{version}"
+  end
+end
+
+def init_cmd
+  execute "anyenv init" do
+    user @username if @username
+    command @init_cmd
   end
 end
