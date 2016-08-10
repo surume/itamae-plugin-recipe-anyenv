@@ -32,7 +32,7 @@ end
 def install(from, to)
   execute <<-"EOS".gsub("\n", ' ')
 export ANYENV_ROOT=#{@root_path};
-export PATH=#{root_path}/bin:${PATH};
+export PATH=#{@root_path}/bin:${PATH};
 eval "$(anyenv init -)";
 yes | #{from} install #{to};
   EOS
