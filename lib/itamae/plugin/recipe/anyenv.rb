@@ -30,7 +30,7 @@ end
 def anyenv_init_with(command)
   <<-"EOS".gsub("\n", ' ')
     export ANYENV_ROOT=#{@root_path};
-    export PATH=#{root_path}/bin:${PATH};
+    export PATH=#{@root_path}/bin:${PATH};
     eval "$(anyenv init -)";
     #{command}
   EOS
