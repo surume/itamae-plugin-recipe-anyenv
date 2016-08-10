@@ -25,9 +25,9 @@ end
 def install_envs(attributes)
   attributes[:install_versions].each do |envs|
     envs.each do |env, vers|
-      # install('anyenv', env)
+      install('anyenv', env)
 
-      # vers.each { |ver| install(env, ver) }
+      vers.each { |ver| install(env, ver) }
 
       global_version(env, vers.first)
     end
@@ -35,7 +35,7 @@ def install_envs(attributes)
 end
 
 def install(from, to)
-  execute anyenv_init_with("yes | #{from} install #{to};")
+  execute anyenv_init_with(@root_path, "yes | #{from} install #{to};")
 end
 
 def init(username)
@@ -43,10 +43,10 @@ def init(username)
   @root_path = ENV['ANYENV_ROOT'] || DEFAULT_ANYENV_ROOT
 end
 
-def anyenv_init_with(command)
+def anyenv_init_with(root_path, command)
   <<-"EOS".gsub("\n", ' ')
-    export ANYENV_ROOT=#{@root_path};
-    export PATH=#{@root_path}/bin:${PATH};
+    export ANYENV_ROOT=#{root_path};
+    export PATH=#{root_path}/bin:${PATH};
     eval "$(anyenv init -)";
     #{command}
   EOS
@@ -137,7 +137,7 @@ end
 def global_version(envname, version)
   execute "#{envname} global #{version}" do
     # user @username if @username
-    command anyenv_init_with <<-EOS
+    command anyenv_init_with @root_path, <<-EOS
       #{envname} global;
       #{version}; #{envname} rehash;
     EOS
