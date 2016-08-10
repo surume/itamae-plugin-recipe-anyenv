@@ -119,7 +119,7 @@ end
 
 def install_env(envname)
   exec = anyenv_init_with @root_path, <<-EOS
-    "yes | anyenv install #{envname}"
+    yes | anyenv install #{envname}
   EOS
   is_exec = anyenv_init_with @root_path, "type #{envname}"
 
@@ -132,7 +132,7 @@ end
 
 def install_env_version(envname, version)
   exec = anyenv_init_with @root_path, <<-EOS
-    "yes | #{envname} install #{version}"
+    yes | #{envname} install #{version}
   EOS
   is_exec = anyenv_init_with @root_path, "#{envname} versions | grep #{version}"
 
