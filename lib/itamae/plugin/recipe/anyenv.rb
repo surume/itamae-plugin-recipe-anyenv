@@ -22,6 +22,29 @@ eval "$(anyenv init -)";
 anyenv install rbenv;
   EOS
 
+  execute <<-"EOS".gsub("\n", ' ')
+export ANYENV_ROOT=#{root_path};
+export PATH=#{root_path}/bin:${PATH};
+eval "$(anyenv init -)";
+rbenv install 2.3.1;
+  EOS
+
+  execute <<-"EOS".gsub("\n", ' ')
+export ANYENV_ROOT=#{root_path};
+export PATH=#{root_path}/bin:${PATH};
+eval "$(anyenv init -)";
+anyenv install exenv;
+  EOS
+
+  execute <<-"EOS".gsub("\n", ' ')
+export ANYENV_ROOT=#{root_path};
+export PATH=#{root_path}/bin:${PATH};
+eval "$(anyenv init -)";
+exenv install 1.0.0;
+  EOS
+
+
+
   # install_envs(attributes)
 end
 
