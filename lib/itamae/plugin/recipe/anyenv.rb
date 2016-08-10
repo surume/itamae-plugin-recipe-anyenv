@@ -8,25 +8,37 @@ def run(attributes, username = ENV['USER'])
   p :ANYENV_ROOT
   p ENV['ANYENV_ROOT']
 
-  clone_anyenv(@root_path)
-  clone_anyenv_update(@root_path)
+  clone_anyenv
+  clone_anyenv_update
 
   directory "#{@root_path}/envs"
 
-  install('anyenv', 'rbenv')
-  install('rbenv', '2.3.1')
-  install('anyenv', 'exenv')
-  install('exenv', '1.3.2')
+  # install('anyenv', 'rbenv')
+  # install('rbenv', '2.3.1')
+  # install('anyenv', 'exenv')
+  # install('exenv', '1.3.2')
 
 
 
-  # install_envs(attributes)
+  install_envs(attributes)
 end
 
 private
 
 def scheme
   @scheme ||= node[:anyenv][:scheme] || 'git'
+end
+
+def install_envs
+  attributes[:install_versions].each do |envs|
+    envs.each do |env, vers|
+      install('anyenv', env)
+
+      vers.each { |ver| install(env, ver) }
+
+      global_version(env, vers.first)
+    end
+  end
 end
 
 def install(from, to)
@@ -85,13 +97,13 @@ def clone_repository(install_path, repo_path)
   end
 end
 
-def clone_anyenv(root_path)
+def clone_anyenv
   repo_path = "#{scheme}://github.com/riywo/anyenv.git"
-  clone_repository(root_path, repo_path)
+  clone_repository(@root_path, repo_path)
 end
 
-def clone_anyenv_update(root_path)
-  install_path = "#{root_path}/plugins/anyenv-update"
+def clone_anyenv_update
+  install_path = "#{@root_path}/plugins/anyenv-update"
   repo_path = "#{scheme}://github.com/znz/anyenv-update.git"
   clone_repository(install_path, repo_path)
 end
@@ -127,11 +139,13 @@ end
 #   end
 # end
 
-# def global_version(envname, version)
-#   execute "#{envname} global #{version}" do
-#     user @username if @username
-#     command "#{@init_cmd} #{envname} global #{version}; " \
-#       "#{@init_cmd} #{envname} rehash"
-#     not_if "#{@init_cmd} #{envname} global | grep #{version}"
-#   end
-# end
+def global_version(envname, version)
+  execute "#{envname} global #{version}" do
+    user @username if @username
+    command <<-EOS
+      #{envname} global #{version};
+      #{envname} rehash;
+    EOS
+    not_if "#{envname} global | grep #{version}"
+  end
+end
