@@ -46,8 +46,8 @@ def anyenv_user_root(username)
 end
 
 def anyenv_init(root_path)
-  init_str =  %(export ANYENV_ROOT="#{root_path}"; )
-  init_str << %(export PATH="#{root_path}/bin:${PATH}"; )
+  init_str =  %(export ANYENV_ROOT=#{root_path}; )
+  init_str << %(export PATH=#{root_path}/bin:${PATH}; )
   init_str << %(eval "$(anyenv init -)"; )
 end
 
@@ -89,7 +89,7 @@ end
 def install_env(envname)
   execute "install #{envname}" do
     user @username if @username
-    command "#{@init_cmd} yes | anyenv install #{envname}; #{@init_cmd}"
+    command "#{@init_cmd}; yes | anyenv install #{envname};"
     not_if "#{@init_cmd} type #{envname}"
   end
 end
