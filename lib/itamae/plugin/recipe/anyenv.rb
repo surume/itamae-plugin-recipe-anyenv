@@ -50,7 +50,7 @@ def anyenv_init(root_path)
   <<-"EOS".gsub("\n", ' ')
 export ANYENV_ROOT=#{root_path};
 export PATH=#{root_path}/bin:${PATH};
-eval $(anyenv init -);
+eval "$(anyenv init -)";
   EOS
 end
 
@@ -90,6 +90,7 @@ def install_envs(attributes)
 end
 
 def install_env(envname)
+  execute 'eval "$(anyenv init -)"'
   execute "install #{envname}" do
     user @username if @username
     command "#{@init_cmd} yes | anyenv install #{envname};"
