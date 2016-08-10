@@ -29,7 +29,7 @@ def scheme
   @scheme ||= node[:anyenv][:scheme] || 'git'
 end
 
-def install_envs
+def install_envs(attributes)
   attributes[:install_versions].each do |envs|
     envs.each do |env, vers|
       install('anyenv', env)
