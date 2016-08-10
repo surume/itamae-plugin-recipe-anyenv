@@ -135,12 +135,13 @@ end
 # end
 
 def global_version(envname, version)
-  execute "#{envname} global #{version}" do
-    # user @username if @username
-    command anyenv_init_with @root_path, <<-EOS
+  exec = anyenv_init_with @root_path, <<-EOS
       #{envname} global;
       #{version}; #{envname} rehash;
     EOS
+  execute "#{envname} global #{version}" do
+    # user @username if @username
+    command exec
     # not_if anyenv_init_with "#{envname} global | grep #{version}"
   end
   # execute "#{envname} global #{version}" do
