@@ -15,7 +15,6 @@ def init(username)
   @username = username
   @anyenv_root_path = anyenv_root(username)
   @init_cmd = anyenv_init(@anyenv_root_path)
-  p @init_cmd
 end
 
 def scheme
@@ -90,27 +89,29 @@ def install_envs(attributes)
 end
 
 def install_env(envname)
-  execute @init_cmd
+  command @init_cmd
   execute "install #{envname}" do
     user @username if @username
-    command "#{@init_cmd} yes | anyenv install #{envname};"
-    not_if "#{@init_cmd} type #{envname}"
+    command "yes | anyenv install #{envname};"
+    not_if "type #{envname}"
   end
 end
 
 def install_env_version(envname, version)
+  execute @init_cmd
   execute "#{envname} install #{version}" do
     user @username if @username
-    command "#{@init_cmd} yes | #{envname} install #{version}"
-    not_if "#{@init_cmd} #{envname} versions | grep #{version}"
+    command "yes | #{envname} install #{version}"
+    not_if "#{envname} versions | grep #{version}"
   end
 end
 
 def global_version(envname, version)
+  execute @init_cmd
   execute "#{envname} global #{version}" do
     user @username if @username
-    command "#{@init_cmd} #{envname} global #{version}; " \
-      "#{@init_cmd} #{envname} rehash"
-    not_if "#{@init_cmd} #{envname} global | grep #{version}"
+    command "#{envname} global #{version}; " \
+      "#{envname} rehash"
+    not_if "#{envname} global | grep #{version}"
   end
 end
