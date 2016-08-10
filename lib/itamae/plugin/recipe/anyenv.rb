@@ -6,7 +6,6 @@ def run(attributes, username = nil)
   clone_anyenv
   clone_anyenv_update
 
-  init_cmd
   install_envs(attributes)
 end
 
@@ -94,7 +93,8 @@ end
 def install_env(envname)
   execute "install #{envname}" do
     user @username if @username
-    command "yes | anyenv install #{envname};"
+    command @init_cmd
+    command "#{@init_cmd} yes | anyenv install #{envname};"
     not_if "type #{envname}"
   end
 end
@@ -102,28 +102,16 @@ end
 def install_env_version(envname, version)
   execute "#{envname} install #{version}" do
     user @username if @username
-    command "yes | #{envname} install #{version}"
-    not_if "#{envname} versions | grep #{version}"
+    command "#{@init_cmd} yes | #{envname} install #{version}"
+    not_if "#{@init_cmd} #{envname} versions | grep #{version}"
   end
 end
 
 def global_version(envname, version)
   execute "#{envname} global #{version}" do
     user @username if @username
-    command "#{envname} global #{version}; " \
-      "#{envname} rehash"
-    not_if "#{envname} global | grep #{version}"
-  end
-end
-
-def init_cmd
-  execute "export ANYENV_ROOT=#{@anyenv_root_path}" do
-    user @username if @username
-  end
-  execute "export PATH=#{@anyenv_root_path}/bin:${PATH}" do
-    user @username if @username
-  end
-  execute 'eval "$(anyenv init -)"' do
-    user @username if @username
+    command "#{@init_cmd} #{envname} global #{version}; " \
+      "#{@init_cmd} #{envname} rehash"
+    not_if "#{@init_cmd} #{envname} global | grep #{version}"
   end
 end
