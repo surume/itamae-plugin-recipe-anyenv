@@ -13,13 +13,6 @@ def run(attributes, username = ENV['USER'])
 
   directory "#{@root_path}/envs"
 
-  # install('anyenv', 'rbenv')
-  # install('rbenv', '2.3.1')
-  # install('anyenv', 'exenv')
-  # install('exenv', '1.3.2')
-
-
-
   install_envs(attributes)
 end
 
@@ -43,10 +36,10 @@ end
 
 def install(from, to)
   execute <<-"EOS".gsub("\n", ' ')
-export ANYENV_ROOT=#{@root_path};
-export PATH=#{@root_path}/bin:${PATH};
-eval "$(anyenv init -)";
-yes | #{from} install #{to};
+    export ANYENV_ROOT=#{@root_path};
+    export PATH=#{@root_path}/bin:${PATH};
+    eval "$(anyenv init -)";
+    yes | #{from} install #{to};
   EOS
 end
 
@@ -140,12 +133,20 @@ end
 # end
 
 def global_version(envname, version)
-  execute "#{envname} global #{version}" do
-    user @username if @username
-    command <<-EOS
-      #{envname} global #{version};
-      #{envname} rehash;
-    EOS
-    not_if "#{envname} global | grep #{version}"
-  end
+  execute <<-"EOS".gsub("\n", ' ')
+    export ANYENV_ROOT=#{@root_path};
+    export PATH=#{@root_path}/bin:${PATH};
+    eval "$(anyenv init -)";
+    #{envname} global #{version};
+    #{envname} rehash;
+  EOS
+
+  # execute "#{envname} global #{version}" do
+  #   user @username if @username
+  #   command <<-EOS
+  #     #{envname} global #{version};
+  #     #{envname} rehash;
+  #   EOS
+  #   not_if "#{envname} global | grep #{version}"
+  # end
 end
