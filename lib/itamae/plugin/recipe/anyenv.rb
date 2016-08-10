@@ -27,7 +27,7 @@ def init(username)
   @root_path = ENV['ANYENV_ROOT'] || DEFAULT_ANYENV_ROOT
 end
 
-def anyenv_init_with(root_path, command)
+def anyenv_init_with(command)
   <<-"EOS".gsub("\n", ' ')
     export ANYENV_ROOT=#{root_path};
     export PATH=#{root_path}/bin:${PATH};
@@ -70,10 +70,10 @@ def install_envs(attributes)
 end
 
 def install_env(envname)
-  exec = anyenv_init_with @root_path, <<-EOS
+  exec = anyenv_init_with <<-EOS
     yes | anyenv install #{envname}
   EOS
-  is_exec = anyenv_init_with @root_path, "type #{envname}"
+  is_exec = anyenv_init_with "type #{envname}"
 
   execute "install #{envname}" do
     user @username if @username
@@ -83,10 +83,10 @@ def install_env(envname)
 end
 
 def install_env_version(envname, version)
-  exec = anyenv_init_with @root_path, <<-EOS
+  exec = anyenv_init_with <<-EOS
     yes | #{envname} install #{version}
   EOS
-  is_exec = anyenv_init_with @root_path, "#{envname} versions | grep #{version}"
+  is_exec = anyenv_init_with "#{envname} versions | grep #{version}"
 
   execute "#{envname} install #{version}" do
     user @username if @username
@@ -96,11 +96,11 @@ def install_env_version(envname, version)
 end
 
 def global_version(envname, version)
-  exec = anyenv_init_with @root_path, <<-EOS
+  exec = anyenv_init_with <<-EOS
     #{envname} global;
     #{version}; #{envname} rehash;
   EOS
-  is_exec = anyenv_init_with @root_path, "#{envname} versions | grep #{version}"
+  is_exec = anyenv_init_with "#{envname} versions | grep #{version}"
 
   execute "#{envname} global #{version}" do
     user @username if @username
