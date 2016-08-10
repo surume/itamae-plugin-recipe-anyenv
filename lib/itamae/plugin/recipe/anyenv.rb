@@ -25,9 +25,9 @@ end
 def install_envs(attributes)
   attributes[:install_versions].each do |envs|
     envs.each do |env, vers|
-      install('anyenv', env)
+      # install('anyenv', env)
 
-      vers.each { |ver| install(env, ver) }
+      # vers.each { |ver| install(env, ver) }
 
       global_version(env, vers.first)
     end
@@ -136,12 +136,12 @@ end
 
 def global_version(envname, version)
   execute "#{envname} global #{version}" do
-    user @username if @username
+    # user @username if @username
     command anyenv_init_with <<-EOS
       #{envname} global;
       #{version}; #{envname} rehash;
     EOS
-    not_if anyenv_init_with "#{envname} global | grep #{version}"
+    # not_if anyenv_init_with "#{envname} global | grep #{version}"
   end
   # execute "#{envname} global #{version}" do
   #   user @username if @username
