@@ -47,9 +47,11 @@ def anyenv_user_root(username)
 end
 
 def anyenv_init(root_path)
-  init_str =  %(export ANYENV_ROOT=#{root_path}; )
-  init_str << %(export PATH=#{root_path}/bin:${PATH}; )
-  init_str << %(anyenv init - | eval; )
+  <<-"EOS".gsub("\n", ' ')
+export ANYENV_ROOT=#{root_path};
+export PATH=#{root_path}/bin:${PATH};
+eval $(anyenv init -);
+  EOS
 end
 
 def clone_repository(install_path, repo_path)
