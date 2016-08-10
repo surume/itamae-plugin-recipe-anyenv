@@ -48,7 +48,7 @@ def anyenv_init_with(command)
     export ANYENV_ROOT=#{@root_path};
     export PATH=#{@root_path}/bin:${PATH};
     eval "$(anyenv init -)";
-    yes | #{command};
+    #{command}
   EOS
 end
 
