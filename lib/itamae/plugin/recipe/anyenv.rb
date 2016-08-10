@@ -89,7 +89,7 @@ def install_envs(attributes)
 end
 
 def install_env(envname)
-  command @init_cmd
+  execute @init_cmd
   execute "install #{envname}" do
     user @username if @username
     command "yes | anyenv install #{envname};"
