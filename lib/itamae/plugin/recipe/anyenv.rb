@@ -15,6 +15,7 @@ def init(username)
   @username = username
   @anyenv_root_path = anyenv_root(username)
   @init_cmd = anyenv_init(@anyenv_root_path)
+  p @init_cmd
 end
 
 def scheme
@@ -89,7 +90,7 @@ end
 def install_env(envname)
   execute "install #{envname}" do
     user @username if @username
-    command "#{@init_cmd}; yes | anyenv install #{envname};"
+    command "#{@init_cmd} yes | anyenv install #{envname};"
     not_if "#{@init_cmd} type #{envname}"
   end
 end
