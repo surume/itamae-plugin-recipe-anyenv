@@ -116,8 +116,13 @@ def global_version(envname, version)
 end
 
 def init_cmd
-  execute "anyenv init" do
+  execute "export ANYENV_ROOT=#{root_path}" do
     user @username if @username
-    command @init_cmd
+  end
+  execute "export PATH=#{root_path}/bin:${PATH}" do
+    user @username if @username
+  end
+  execute 'eval "$(anyenv init -)"' do
+    user @username if @username
   end
 end
