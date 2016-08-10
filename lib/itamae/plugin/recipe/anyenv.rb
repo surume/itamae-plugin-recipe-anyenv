@@ -15,33 +15,10 @@ def run(attributes, username = ENV['USER'])
 
   directory "#{root_path}/envs"
 
-  execute <<-"EOS".gsub("\n", ' ')
-export ANYENV_ROOT=#{root_path};
-export PATH=#{root_path}/bin:${PATH};
-eval "$(anyenv init -)";
-yes | anyenv install rbenv;
-  EOS
-
-  execute <<-"EOS".gsub("\n", ' ')
-export ANYENV_ROOT=#{root_path};
-export PATH=#{root_path}/bin:${PATH};
-eval "$(anyenv init -)";
-yes | rbenv install 2.3.1;
-  EOS
-
-  execute <<-"EOS".gsub("\n", ' ')
-export ANYENV_ROOT=#{root_path};
-export PATH=#{root_path}/bin:${PATH};
-eval "$(anyenv init -)";
-yes | anyenv install exenv;
-  EOS
-
-  execute <<-"EOS".gsub("\n", ' ')
-export ANYENV_ROOT=#{root_path};
-export PATH=#{root_path}/bin:${PATH};
-eval "$(anyenv init -)";
-yes | exenv install 1.0.0;
-  EOS
+  install('anyenv', 'rbenv', root_path)
+  install('rbenv', '2.3.1', root_path)
+  install('anyenv', 'exenv', root_path)
+  install('exenv', '1.3.2', root_path)
 
 
 
@@ -54,6 +31,14 @@ def scheme
   @scheme ||= node[:anyenv][:scheme] || 'git'
 end
 
+def install(from, to, root_path)
+  execute <<-"EOS".gsub("\n", ' ')
+export ANYENV_ROOT=#{root_path};
+export PATH=#{root_path}/bin:${PATH};
+eval "$(anyenv init -)";
+yes | #{from} install #{to};
+  EOS
+end
 # def init(username)
 #   @username = username
 #   @anyenv_root_path = anyenv_root(username)
