@@ -1,24 +1,22 @@
 DEFAULT_ANYENV_ROOT = '/usr/local/anyenv'.freeze
 
 def run(attributes, username = ENV['USER'])
-  # init(username)
+  init(username)
 
   p :USR
   p ENV['USER']
   p :ANYENV_ROOT
   p ENV['ANYENV_ROOT']
 
-  root_path = ENV['ANYENV_ROOT'] || DEFAULT_ANYENV_ROOT
+  clone_anyenv(@root_path)
+  clone_anyenv_update(@root_path)
 
-  clone_anyenv(root_path)
-  clone_anyenv_update(root_path)
+  directory "#{@root_path}/envs"
 
-  directory "#{root_path}/envs"
-
-  install('anyenv', 'rbenv', root_path)
-  install('rbenv', '2.3.1', root_path)
-  install('anyenv', 'exenv', root_path)
-  install('exenv', '1.3.2', root_path)
+  install('anyenv', 'rbenv')
+  install('rbenv', '2.3.1')
+  install('anyenv', 'exenv')
+  install('exenv', '1.3.2')
 
 
 
@@ -31,19 +29,20 @@ def scheme
   @scheme ||= node[:anyenv][:scheme] || 'git'
 end
 
-def install(from, to, root_path)
+def install(from, to)
   execute <<-"EOS".gsub("\n", ' ')
-export ANYENV_ROOT=#{root_path};
+export ANYENV_ROOT=#{@root_path};
 export PATH=#{root_path}/bin:${PATH};
 eval "$(anyenv init -)";
 yes | #{from} install #{to};
   EOS
 end
-# def init(username)
-#   @username = username
-#   @anyenv_root_path = anyenv_root(username)
-#   @init_cmd = anyenv_init(@anyenv_root_path)
-# end
+
+def init(username)
+  @username = username
+  @root_path = ENV['ANYENV_ROOT'] || DEFAULT_ANYENV_ROOT
+  # @init_cmd = anyenv_init(@anyenv_root_path)
+end
 
 
 # def anyenv_root(username)
