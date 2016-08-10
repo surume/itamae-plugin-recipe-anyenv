@@ -35,20 +35,22 @@ def install_envs(attributes)
 end
 
 def install(from, to)
-  execute <<-"EOS".gsub("\n", ' ')
-    export ANYENV_ROOT=#{@root_path};
-    export PATH=#{@root_path}/bin:${PATH};
-    eval "$(anyenv init -)";
-    yes | #{from} install #{to};
-  EOS
+  execute anyenv_init_with("yes | #{command} install #{to};")
 end
 
 def init(username)
   @username = username
   @root_path = ENV['ANYENV_ROOT'] || DEFAULT_ANYENV_ROOT
-  # @init_cmd = anyenv_init(@anyenv_root_path)
 end
 
+def anyenv_init_with(command)
+  <<-"EOS".gsub("\n", ' ')
+    export ANYENV_ROOT=#{@root_path};
+    export PATH=#{@root_path}/bin:${PATH};
+    eval "$(anyenv init -)";
+    yes | #{command};
+  EOS
+end
 
 # def anyenv_root(username)
 #   return anyenv_system_root if username.nil?
@@ -133,12 +135,9 @@ end
 # end
 
 def global_version(envname, version)
-  execute <<-"EOS".gsub("\n", ' ')
-    export ANYENV_ROOT=#{@root_path};
-    export PATH=#{@root_path}/bin:${PATH};
-    eval "$(anyenv init -)";
-    #{envname} global #{version};
-    #{envname} rehash;
+  execute anyenv_init_with <<-EOS
+    #{envname} global;
+    #{version}; #{envname} rehash;
   EOS
 
   # execute "#{envname} global #{version}" do
