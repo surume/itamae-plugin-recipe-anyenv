@@ -57,6 +57,8 @@ def clone_repository(install_path, repo_path)
     repository repo_path if repo_path
     not_if "test -d #{install_path}"
   end
+
+  directory "#{@anyenv_root_path}/envs"
 end
 
 def clone_anyenv
