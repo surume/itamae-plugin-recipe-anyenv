@@ -32,8 +32,9 @@ def anyenv_init_with(command)
 end
 
 def clone_repository(install_path, repo_path)
+  username = @username
   git install_path do
-    user @username if @username
+    user username if username
     repository repo_path if repo_path
     not_if "test -d #{install_path}"
   end
@@ -65,32 +66,35 @@ def install_envs(attributes)
 end
 
 def install_env(envname)
+  username = @username
   exec = anyenv_init_with <<-EOS
     yes | anyenv install #{envname}
   EOS
   is_exec = anyenv_init_with "type #{envname}"
 
   execute "install #{envname}" do
-    user @username if @username
+    user username if username
     command exec
     not_if is_exec
   end
 end
 
 def install_env_version(envname, version)
+  username = @username
   exec = anyenv_init_with <<-EOS
     yes | #{envname} install #{version}
   EOS
   is_exec = anyenv_init_with "#{envname} versions | grep #{version}"
 
   execute "#{envname} install #{version}" do
-    user @username if @username
+    user username if username
     command exec
     not_if is_exec
   end
 end
 
 def global_version(envname, version)
+  username = @username
   exec = anyenv_init_with <<-EOS
     #{envname} global;
     #{version}; #{envname} rehash;
@@ -98,7 +102,7 @@ def global_version(envname, version)
   is_exec = anyenv_init_with "#{envname} versions | grep #{version}"
 
   execute "#{envname} global #{version}" do
-    user @username if @username
+    user username if username
     command exec
     not_if is_exec
   end
