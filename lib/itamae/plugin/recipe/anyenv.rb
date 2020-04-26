@@ -5,6 +5,7 @@ def run(attributes, username = ENV['USER'])
 
   clone_anyenv
   clone_anyenv_update
+  init_anyenv
 
   directory "#{@root_path}/envs"
 
@@ -99,6 +100,19 @@ def global_version(envname, version)
 
   execute "#{envname} global #{version}" do
     user @username if @username
+    command exec
+    not_if is_exec
+  end
+end
+
+def init_anyenv
+  username = @username
+
+  exec = anyenv_init_with("yes | #{@root_path}/bin/anyenv install --init")
+  is_exec = "test -d $HOME/.config/anyenv/anyenv-install"
+
+  execute "run anyenv install --init" do
+    user username if username
     command exec
     not_if is_exec
   end
